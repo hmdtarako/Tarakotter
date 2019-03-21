@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tarakotter</string>
+
+    <string name="label_login">ログイン</string>
+    <string name="label_logout">ログアウト</string>
+    <string name="label_post">投稿</string>
+
+    <string name="hint_tweet">いまどうしてる？</string>
+
+    <string name="status_login">ログイン済</string>
+    <string name="status_logout">未ログイン</string>
+
+    <string name="toast_success">tweet success</string>
+    <string name="toast_failure">tweet failure</string>
+</resources>

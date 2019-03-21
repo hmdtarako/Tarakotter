@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tarakotter</string>
+
+    <string name="label_login">login</string>
+    <string name="label_logout">logout</string>
+    <string name="label_post">post</string>
+
+    <string name="hint_tweet">"What's happening?"</string>
+
+    <string name="status_login">already logged in</string>
+    <string name="status_logout">NOT logged in</string>
+
+    <string name="toast_success">tweet success</string>
+    <string name="toast_failure">tweet failure</string>
+</resources>
