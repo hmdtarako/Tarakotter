@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 class LoginActivity : Activity() {
 
     companion object {
-        private const val TAG = "Tarakotter/LoginActivity"
+        private const val TAG = "Tarakotter@LoginActivity"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

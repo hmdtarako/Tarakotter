@@ -4,8 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 
@@ -16,6 +14,7 @@ import com.twitter.sdk.android.core.TwitterException
 import com.twitter.sdk.android.core.models.Tweet
 
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 class MainActivity : Activity() {
 
@@ -23,7 +22,7 @@ class MainActivity : Activity() {
     private var tweetAdapter: TweetAdapter? = null
 
     companion object {
-        private const val TAG = "Tarakotter/MainActivity"
+        private const val TAG = "Tarakotter@MainActivity"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,27 +31,38 @@ class MainActivity : Activity() {
 
         tweetAdapter = TweetAdapter(this, tweetList)
         timeline.adapter = tweetAdapter
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
+        debug_button.setOnClickListener {
+            val sessionManager = TwitterCore.getInstance().sessionManager
+            val userId = sessionManager.activeSession.userId
 
-    override fun onMenuItemSelected(featureId: Int, item: MenuItem?): Boolean {
-        return when (item?.itemId) {
-            R.id.menu_logout -> {
-                clearActiveSession()
-                tryLogin()
-                true
-            }
-            R.id.menu_debug -> {
-                updateTimeline()
-                true
-            }
-            else -> {
-                super.onMenuItemSelected(featureId, item)
-            }
+            val apiClient = TwitterCore.getInstance().apiClient
+            val statusesService = apiClient.statusesService
+
+            val call = apiClient.statusesService.show(1108974005602516992, null, null, null)
+
+            call.enqueue(object : Callback<Tweet>() {
+                override fun success(result: Result<Tweet>?) {
+                    Log.d(TAG, "" + result?.data?.user?.id + "/$userId")
+                }
+
+                override fun failure(exception: TwitterException?) {
+                    Log.d(TAG, "enqueue failure")
+                }
+            })
+        }
+        login_button.setOnClickListener {
+            tryLogin()
+        }
+        post_button.setOnClickListener {
+            post(edit_text.text.toString())
+        }
+        account_button.setOnClickListener {
+            clearActiveSession()
+            tryLogin()
+        }
+        update_button.setOnClickListener {
+            updateTimeline()
         }
     }
 
@@ -61,15 +71,10 @@ class MainActivity : Activity() {
 
         if (isSessionActive()) {
             login_button.visibility = View.GONE
-            post_button.setOnClickListener {
-                val str = edit_text.text.toString()
-                post(str)
-            }
+            account_button.visibility = View.VISIBLE
         } else {
             login_button.visibility = View.VISIBLE
-            login_button.setOnClickListener {
-                tryLogin()
-            }
+            account_button.visibility = View.GONE
         }
     }
 

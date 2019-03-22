@@ -5,6 +5,7 @@
     <string name="label_login">ログイン</string>
     <string name="label_logout">ログアウト</string>
     <string name="label_post">投稿</string>
+    <string name="label_update">更新</string>
 
     <string name="hint_tweet">いまどうしてる？</string>
 
