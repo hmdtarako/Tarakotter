@@ -15,9 +15,11 @@ import com.twitter.sdk.android.core.models.Tweet
 
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
+import kotlin.concurrent.schedule
 
 class MainActivity : Activity() {
 
+    private val timer = Timer()
     private val tweetList: MutableList<Tweet> = ArrayList<Tweet>()
     private var tweetAdapter: TweetAdapter? = null
 
@@ -64,6 +66,11 @@ class MainActivity : Activity() {
         update_button.setOnClickListener {
             updateTimeline()
         }
+
+        timer.schedule(0,60000) {
+            Log.d(TAG, "TimerAction")
+            updateTimeline()
+        }
     }
 
     override fun onResume() {
@@ -76,6 +83,11 @@ class MainActivity : Activity() {
             login_button.visibility = View.VISIBLE
             account_button.visibility = View.GONE
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timer.cancel()
     }
 
     private fun isSessionActive() : Boolean {
@@ -122,6 +134,7 @@ class MainActivity : Activity() {
         call.enqueue(object : Callback<List<Tweet>>() {
             override fun success(result: Result<List<Tweet>>?) {
                 result?.let {
+                    tweetList.removeAll { true }
                     tweetList.addAll(it.data)
                     tweetAdapter?.notifyDataSetChanged()
 
