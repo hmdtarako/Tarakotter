@@ -7,6 +7,12 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
+    <ListView
+            android:id="@+id/timeline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/edit_text"/>
+
     <Button
             android:id="@+id/login_button"
             android:text="@string/label_login"

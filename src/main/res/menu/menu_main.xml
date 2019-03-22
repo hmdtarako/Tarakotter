@@ -3,4 +3,8 @@
     <item
             android:id="@+id/menu_logout"
             android:title="@string/label_logout" />
+
+    <item
+            android:id="@+id/menu_debug"
+            android:title="debug" />
 </menu>

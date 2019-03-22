@@ -19,6 +19,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : Activity() {
 
+    private val tweetList: MutableList<Tweet> = ArrayList<Tweet>()
+    private var tweetAdapter: TweetAdapter? = null
+
     companion object {
         private const val TAG = "Tarakotter/MainActivity"
     }
@@ -26,6 +29,9 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        tweetAdapter = TweetAdapter(this, tweetList)
+        timeline.adapter = tweetAdapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -34,14 +40,18 @@ class MainActivity : Activity() {
     }
 
     override fun onMenuItemSelected(featureId: Int, item: MenuItem?): Boolean {
-        when (item?.itemId) {
+        return when (item?.itemId) {
             R.id.menu_logout -> {
                 clearActiveSession()
                 tryLogin()
-                return true
+                true
+            }
+            R.id.menu_debug -> {
+                updateTimeline()
+                true
             }
             else -> {
-                return super.onMenuItemSelected(featureId, item)
+                super.onMenuItemSelected(featureId, item)
             }
         }
     }
@@ -94,6 +104,32 @@ class MainActivity : Activity() {
 
             override fun failure(exception: TwitterException?) {
                 Toast.makeText(applicationContext, getString(R.string.toast_failure), Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun updateTimeline() {
+        val apiClient = TwitterCore.getInstance().apiClient
+        val statusesService = apiClient.statusesService
+        val count = 20
+        val call = statusesService.homeTimeline(count, null, null, null, null, null, null)
+
+        call.enqueue(object : Callback<List<Tweet>>() {
+            override fun success(result: Result<List<Tweet>>?) {
+                result?.let {
+                    tweetList.addAll(it.data)
+                    tweetAdapter?.notifyDataSetChanged()
+
+                    val msg = "タイムライン取得成功:${it.data.size}件"
+                    Log.d(TAG, msg)
+                    Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun failure(exception: TwitterException?) {
+                val msg = "タイムライン取得失敗"
+                Log.d(TAG, msg)
+                Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
             }
         })
     }
