@@ -20,7 +20,7 @@ import kotlin.concurrent.schedule
 
 class MainActivity : Activity() {
 
-    private val timer = Timer()
+    private var timer : Timer? = null
     private val tweetList: MutableList<Tweet> = ArrayList<Tweet>()
     private var tweetAdapter: TweetAdapter? = null
 
@@ -45,7 +45,8 @@ class MainActivity : Activity() {
 
             val call = apiClient.statusesService.show(1108974005602516992, null, null, null)
 
-            timer.cancel()
+            timer?.cancel()
+            Log.d(TAG, "Timer is canceled.")
 
             call.enqueue(object : Callback<Tweet>() {
                 override fun success(result: Result<Tweet>?) {
@@ -78,14 +79,15 @@ class MainActivity : Activity() {
         if (isSessionActive()) {
             login_button.visibility = View.GONE
             account_button.visibility = View.VISIBLE
+
+            timer = Timer()
+            timer?.schedule(0, TIMER_PERIOD) {
+                Log.d(TAG, "TimerAction")
+                updateTimeline()
+            }
         } else {
             login_button.visibility = View.VISIBLE
             account_button.visibility = View.GONE
-        }
-
-        timer.schedule(0, TIMER_PERIOD) {
-            Log.d(TAG, "TimerAction")
-            updateTimeline()
         }
     }
 
@@ -96,7 +98,8 @@ class MainActivity : Activity() {
 
     override fun onPause() {
         super.onPause()
-        timer.cancel()
+        timer?.cancel()
+        timer = null
     }
 
     private fun isSessionActive() : Boolean {
