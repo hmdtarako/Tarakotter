@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.twitter.sdk.android.core.models.Tweet
 import kotlinx.android.synthetic.main.row_tweet.view.*
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -45,6 +46,10 @@ class TweetAdapter(context: Context, val tweetList: List<Tweet>) : BaseAdapter()
         } else {
             view.recent_mark.visibility = View.GONE
         }
+
+        val task = ImageDownloadTask(view.icon)
+        val url = URL(tweetList[p0].user.profileImageUrl)
+        task.execute(url)
 
         return view
     }
