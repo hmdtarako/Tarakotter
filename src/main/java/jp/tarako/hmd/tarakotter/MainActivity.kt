@@ -2,6 +2,7 @@ package jp.tarako.hmd.tarakotter
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -25,6 +26,7 @@ class MainActivity : Activity() {
 
     companion object {
         private const val TAG = "Tarakotter@MainActivity"
+        private const val TIMER_PERIOD = 60000L
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +44,8 @@ class MainActivity : Activity() {
             val statusesService = apiClient.statusesService
 
             val call = apiClient.statusesService.show(1108974005602516992, null, null, null)
+
+            timer.cancel()
 
             call.enqueue(object : Callback<Tweet>() {
                 override fun success(result: Result<Tweet>?) {
@@ -66,11 +70,6 @@ class MainActivity : Activity() {
         update_button.setOnClickListener {
             updateTimeline()
         }
-
-        timer.schedule(0,60000) {
-            Log.d(TAG, "TimerAction")
-            updateTimeline()
-        }
     }
 
     override fun onResume() {
@@ -83,10 +82,20 @@ class MainActivity : Activity() {
             login_button.visibility = View.VISIBLE
             account_button.visibility = View.GONE
         }
+
+        timer.schedule(0, TIMER_PERIOD) {
+            Log.d(TAG, "TimerAction")
+            updateTimeline()
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        Log.d(TAG, "onConfigurationChanged")
+    }
+
+    override fun onPause() {
+        super.onPause()
         timer.cancel()
     }
 

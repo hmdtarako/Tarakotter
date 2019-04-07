@@ -7,11 +7,22 @@
 
     <TextView
             android:id="@+id/screen_name"
+            android:textSize="@dimen/size_screen_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
     <TextView
+            android:id="@+id/recent_mark"
+            android:layout_width="wrap_content"
+            android:text="●"
+            android:textSize="@dimen/size_screen_name"
+            android:textColor="@color/colorAccent"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+    <TextView
             android:id="@+id/tweet_body"
+            android:textSize="@dimen/size_tweet_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/screen_name"/>

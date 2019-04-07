@@ -4,6 +4,7 @@
 
     <string name="label_login">login</string>
     <string name="label_logout">logout</string>
+    <string name="label_account">account</string>
     <string name="label_post">post</string>
     <string name="label_update">update</string>
 
