@@ -1,7 +1,6 @@
 package jp.tarako.hmd.tarakotter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class TweetAdapter(context: Context, val tweetList: List<Tweet>) : BaseAdapter() {
-    private val inflater = context.getSystemService(LayoutInflater::class.java)
+    private val inflater = LayoutInflater.from(context)
     private val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy", Locale.ENGLISH)
 
     companion object {
@@ -24,21 +23,21 @@ class TweetAdapter(context: Context, val tweetList: List<Tweet>) : BaseAdapter()
         return tweetList.size
     }
 
-    override fun getItem(p0: Int): Any {
-        return tweetList[p0]
+    override fun getItem(position: Int): Any {
+        return tweetList[position]
     }
 
-    override fun getItemId(p0: Int): Long {
-        return tweetList[p0].getId()
+    override fun getItemId(position: Int): Long {
+        return tweetList[position].getId()
     }
 
-    override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
-        val view = p1 ?: inflater.inflate(R.layout.row_tweet, p2, false)
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        val view = convertView ?: inflater.inflate(R.layout.row_tweet, parent, false)
 
-        view.screen_name.text = "${tweetList[p0].user.name}@${tweetList[p0].user.screenName}"
-        view.tweet_body.text = tweetList[p0].text
+        view.screen_name.text = "${tweetList[position].user.name}@${tweetList[position].user.screenName}"
+        view.tweet_body.text = tweetList[position].text
 
-        val dateTweet = dateFormat.parse(tweetList[p0].createdAt)
+        val dateTweet = dateFormat.parse(tweetList[position].createdAt)
         val dateCurrentLimit = Date(System.currentTimeMillis() - CURRENT_LIMIT_DELAY)
 
         if (dateTweet.after(dateCurrentLimit)) {
@@ -48,7 +47,7 @@ class TweetAdapter(context: Context, val tweetList: List<Tweet>) : BaseAdapter()
         }
 
         val task = ImageDownloadTask(view.icon)
-        val url = URL(tweetList[p0].user.profileImageUrl)
+        val url = URL(tweetList[position].user.profileImageUrl)
         task.execute(url)
 
         return view
