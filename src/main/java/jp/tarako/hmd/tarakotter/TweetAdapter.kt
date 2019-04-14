@@ -40,24 +40,40 @@ class TweetAdapter(context: Context, val tweetList: List<Tweet>) : BaseAdapter()
             val tweetBody = tweetView.tweet_body
             val recentMark = tweetView.recent_mark
             val icon = tweetView.icon
-            val viewHolder = ViewHolder(screenName, tweetBody, recentMark, icon)
+            val iconRetweeter = tweetView.icon_retweeter
+            val viewHolder = ViewHolder(screenName, tweetBody, recentMark, icon, iconRetweeter)
             tweetView.tag = viewHolder
             Pair(viewHolder, tweetView)
         } else {
             Pair(convertView.tag as ViewHolder, convertView)
         }
 
-        viewHolder.screenName.text = "${tweetList[position].user.name}@${tweetList[position].user.screenName}"
-        viewHolder.tweetBody.text = tweetList[position].text
+        val tweet = tweetList[position]
+        viewHolder.screenName.text = "${tweet.user.name}@${tweet.user.screenName}"
+        viewHolder.tweetBody.text = tweet.text
 
-        val dateTweet = dateFormat.parse(tweetList[position].createdAt)
+        val dateTweet = dateFormat.parse(tweet.createdAt)
         val dateCurrentLimit = Date(System.currentTimeMillis() - CURRENT_LIMIT_DELAY)
         val isRecent = dateTweet.after(dateCurrentLimit)
         viewHolder.recentMark.visibility = if (isRecent) View.VISIBLE else View.GONE
 
-        val task = ImageDownloadTask(viewHolder.icon)
-        val url = URL(tweetList[position].user.profileImageUrl)
-        task.execute(url)
+        if (tweet.retweetedStatus != null) {
+            val task = ImageDownloadTask(viewHolder.icon)
+            val url = URL(tweet.retweetedStatus.user.profileImageUrl)
+            task.execute(url)
+
+            val taskRT = ImageDownloadTask(viewHolder.iconRetweeter)
+            val urlRT = URL(tweet.user.profileImageUrl)
+            taskRT.execute(urlRT)
+
+            viewHolder.iconRetweeter.visibility = View.VISIBLE
+        } else {
+            val task = ImageDownloadTask(viewHolder.icon)
+            val url = URL(tweet.user.profileImageUrl)
+            task.execute(url)
+
+            viewHolder.iconRetweeter.visibility = View.GONE
+        }
 
         return view
     }
@@ -66,5 +82,6 @@ class TweetAdapter(context: Context, val tweetList: List<Tweet>) : BaseAdapter()
         val screenName: TextView,
         val tweetBody: TextView,
         val recentMark: TextView,
-        val icon: ImageView)
+        val icon: ImageView,
+        val iconRetweeter: ImageView)
 }
