@@ -140,7 +140,7 @@ class MainActivity : Activity() {
     private fun updateTimeline() {
         val apiClient = TwitterCore.getInstance().apiClient
         val statusesService = apiClient.statusesService
-        val count = 20
+        val count = 50
         val call = statusesService.homeTimeline(count, null, null, null, null, null, null)
 
         call.enqueue(object : Callback<List<Tweet>>() {
